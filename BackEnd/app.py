@@ -6,23 +6,23 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
 
-# Load environment variables
+
 load_dotenv()
 GOOGLE_API_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 
-# Initialize Flask app
+
 app = Flask(__name__)
 CORS(app)
 
-# Load trained ML model
+
 model = joblib.load('../Model/fare_model.pkl')
 
-# Home route to confirm API is running
+
 @app.route("/", methods=["GET"])
 def home():
     return "Taxi Fare Estimator API is running!"
 
-# Helper to get distance using Google Maps API
+
 def get_distance_km(source, destination, city):
     origin = f"{source}, {city}"
     dest = f"{destination}, {city}"
@@ -36,13 +36,13 @@ def get_distance_km(source, destination, city):
         response = requests.get(url)
         data = response.json()
         distance_meters = data["rows"][0]["elements"][0]["distance"]["value"]
-        return distance_meters / 1000  # Convert to km
+        return distance_meters / 1000  # Now in KM
     
     except Exception as e:
         print("Distance fetch error:", e)
         return None
 
-# Fare prediction endpoint
+
 @app.route("/calculate-fare", methods=["POST"])
 def calculate_fare():
     try:
@@ -55,10 +55,12 @@ def calculate_fare():
             return jsonify({"error": "Missing required fields"}), 400
 
         distance_km = get_distance_km(source, destination, city)
+
         if distance_km is None:
             return jsonify({"error": "Failed to fetch distance"}), 500
 
         vehicle_types = ["bike", "auto", "car"]
+        
         inputs = pd.DataFrame([
             {
                 "city": city,
