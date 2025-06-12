@@ -24,6 +24,9 @@ const App = () => {
   };
 
   const locations = selectedCity ? cities[selectedCity] : [];
+  const hostname = window.location.hostname;
+  const backendURL = `http://${hostname}:5000`;
+
 
   const handleSubmit = async (e) => {
   e.preventDefault();
@@ -34,7 +37,7 @@ const App = () => {
   }
 
   try {
-    const response = await axios.post('http://127.0.0.1:5000/calculate-fare', {
+    const response = await axios.post(`${backendURL}/calculate-fare`, {
       city: selectedCity,
       source,
       destination
